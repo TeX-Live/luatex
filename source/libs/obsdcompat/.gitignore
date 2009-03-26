@@ -1,0 +1,6 @@
+/*.a
+/*.o
+/.deps
+/Makefile
+/svn-prop.tmp
+/config.status

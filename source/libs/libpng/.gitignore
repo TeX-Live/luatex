@@ -1,0 +1,9 @@
+/*.a
+/config.h
+/config.status
+/.deps
+/Makefile
+/*.o
+/pngconf.h
+/png.h
+/stamp-h1

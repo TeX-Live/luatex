@@ -1,0 +1,9 @@
+/*.a
+/config.h
+/config.status
+/.deps
+/Makefile
+/*.o
+/stamp-h1
+/zconf.h
+/zlib.h

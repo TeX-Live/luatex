@@ -1,0 +1,17 @@
+/c-auto.h
+/config.status
+/.deps
+/kpseaccess
+/kpsereadlink
+/kpsestat
+/kpsewhich
+/*.la
+/.libs
+/libtool
+/*.lo
+/Makefile
+/*.o
+/paths.h
+/stamp-h1
+/stamp-paths
+/svn-prop.tmp

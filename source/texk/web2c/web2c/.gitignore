@@ -1,1 +1,10 @@
 /autom4te.cache
+/config.status
+/.deps
+/fixwrites
+/libtool
+/makecpool
+/Makefile
+/*.o
+/splitup
+/web2c

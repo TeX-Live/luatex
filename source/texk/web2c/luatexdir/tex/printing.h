@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id$ */
+/* $Id: printing.h 4722 2014-01-03 09:32:35Z taco $ */
 
 #ifndef PRINTING_H
 #  define PRINTING_H

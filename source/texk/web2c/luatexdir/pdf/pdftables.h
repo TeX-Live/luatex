@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id$ */
+/* $Id: pdftables.h 4558 2013-01-19 14:21:59Z oneiros $ */
 
 #ifndef PDFTABLES_H
 #  define PDFTABLES_H

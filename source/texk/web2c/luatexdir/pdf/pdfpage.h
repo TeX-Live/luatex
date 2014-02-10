@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id$ */
+/* $Id: pdfpage.h 4313 2011-06-21 18:31:19Z hhenkel $ */
 
 #ifndef PDFPAGE_H
 #  define PDFPAGE_H

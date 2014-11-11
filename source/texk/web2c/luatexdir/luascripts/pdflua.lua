@@ -1,5 +1,5 @@
--- $Id$
--- $URL$
+-- $Id: pdflua.lua 5075 2014-10-24 16:58:43Z oneiros $
+-- $URL: https://foundry.supelec.fr/svn/luatex/branches/experimental/source/texk/web2c/luatexdir/luascripts/pdflua.lua $
 
 -- this is early work in progress...
 

@@ -22,8 +22,8 @@ nodes are removedor inserted, temp nodes don't interfere */
 
 @ @c
 static const char _svn_version[] =
-    "$Id$"
-    "$URL$";
+    "$Id: luanode.w 5075 2014-10-24 16:58:43Z oneiros $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/branches/experimental/source/texk/web2c/luatexdir/lua/luanode.w $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"

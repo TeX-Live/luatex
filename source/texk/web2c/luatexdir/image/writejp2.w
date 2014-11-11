@@ -20,8 +20,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id$"
-    "$URL$";
+    "$Id: writejp2.w 5075 2014-10-24 16:58:43Z oneiros $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/branches/experimental/source/texk/web2c/luatexdir/image/writejp2.w $";
 
 @ Basic JPEG~2000 image support. Section and Table references below:
 Information technology --- JPEG~2000 image coding system: Core coding system.

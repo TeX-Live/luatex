@@ -18,8 +18,8 @@
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 %
-% $Id$
-% $URL$
+% $Id: txt2zlib.w 5075 2014-10-24 16:58:43Z oneiros $
+% $URL: https://foundry.supelec.fr/svn/luatex/branches/experimental/source/texk/web2c/luatexdir/luascripts/txt2zlib.w $
 
 @
 @c

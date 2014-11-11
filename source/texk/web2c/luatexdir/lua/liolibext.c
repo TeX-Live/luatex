@@ -34,7 +34,7 @@
 #endif
 
 static const char _svn_version[] =
-    "$Id$ $URL$";
+    "$Id: liolibext.c 5075 2014-10-24 16:58:43Z oneiros $ $URL: https://foundry.supelec.fr/svn/luatex/branches/experimental/source/texk/web2c/luatexdir/lua/liolibext.c $";
 
 
 /*

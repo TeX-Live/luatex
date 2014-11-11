@@ -18,7 +18,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id$ */
+/* $Id: writejbig2.h 5075 2014-10-24 16:58:43Z oneiros $ */
 
 #ifndef WRITEJBIG2_H
 #  define WRITEJBIG2_H

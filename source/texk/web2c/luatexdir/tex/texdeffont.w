@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id$"
-    "$URL$";
+    "$Id: texdeffont.w 5071 2014-10-24 16:33:33Z oneiros $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/branches/experimental/source/texk/web2c/luatexdir/tex/texdeffont.w $";
 
 #include "ptexlib.h"
 

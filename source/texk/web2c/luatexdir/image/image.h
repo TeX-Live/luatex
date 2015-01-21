@@ -18,7 +18,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id$ */
+/* $Id: image.h 4847 2014-03-05 18:13:17Z luigi $ */
 
 #ifndef IMAGE_H
 #  define IMAGE_H

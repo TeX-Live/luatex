@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id$"
-    "$URL$";
+    "$Id: unistring.w 5074 2014-10-24 16:57:38Z oneiros $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/utils/unistring.w $";
 
 @ @c
 #include "ptexlib.h"

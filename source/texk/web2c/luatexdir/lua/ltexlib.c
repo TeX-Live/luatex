@@ -27,7 +27,7 @@ setter no prev link is created so we can presume that it's not used later on. */
 
 
 static const char _svn_version[] =
-    "$Id$ $URL$";
+    "$Id: ltexlib.c 5081 2014-11-07 18:38:33Z luigi $ $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/ltexlib.c $";
 
 #define attribute(A) eqtb[attribute_base+(A)].hh.rh
 #define dimen(A) eqtb[scaled_base+(A)].hh.rh

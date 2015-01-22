@@ -1,4 +1,4 @@
-/* $Id$ */
+/* $Id: .indent.pro 2165 2009-03-30 13:06:25Z oneiros $ */
 --k-and-r-style
 --blank-lines-after-procedures
 --line-length 80

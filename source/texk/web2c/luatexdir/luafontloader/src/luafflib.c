@@ -37,8 +37,8 @@
 #include <locale.h>
 
 static const char _svn_version[] =
-    "$Id$ "
-    "$URL$";
+    "$Id: luafflib.c 5100 2014-12-12 16:11:37Z luigi $ "
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/luafontloader/src/luafflib.c $";
 
 extern char **gww_errors;
 extern int gww_error_count;

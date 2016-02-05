@@ -15,7 +15,3 @@
 .*.swp
 .DS_store
 # Simulated Subversion default ignores end here
-/build-windows
-/windows
-/build
-/linux

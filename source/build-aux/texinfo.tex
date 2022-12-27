@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2022-10-01.15}
+\def\texinfoversion{2022-12-19.22}
 %
 % Copyright 1985, 1986, 1988, 1990-2022 Free Software Foundation, Inc.
 %
@@ -590,6 +590,9 @@
 
 % @/ allows a line break.
 \let\/=\allowbreak
+
+% @- allows explicit insertion of hyphenation points
+\def\-{\discretionary{\normaldash}{}{}}%
 
 % @. is an end-of-sentence period.
 \def\.{.\spacefactor=\endofsentencespacefactor\space}
@@ -1537,9 +1540,10 @@ output) for that.)}
     \next}
   \def\makelink{\addtokens{\toksB}%
     {\noexpand\pdflink{\the\toksC}}\toksC={}\global\countA=0}
-  \def\pdflink#1{%
+  \def\pdflink#1{\pdflinkpage{#1}{#1}}%
+  \def\pdflinkpage#1#2{%
     \startlink attr{/Border [0 0 0]} goto name{\pdfmkpgn{#1}}
-    \setcolor{\linkcolor}#1\endlink}
+    \setcolor{\linkcolor}#2\endlink}
   \def\done{\edef\st{\global\noexpand\toksA={\the\toksB}}\st}
 \else
   % non-pdf mode
@@ -1786,10 +1790,11 @@ output) for that.)}
     \next}
   \def\makelink{\addtokens{\toksB}%
     {\noexpand\pdflink{\the\toksC}}\toksC={}\global\countA=0}
-  \def\pdflink#1{%
+  \def\pdflink#1{\pdflinkpage{#1}{#1}}%
+  \def\pdflinkpage#1#2{%
     \special{pdf:bann << /Border [0 0 0]
       /Type /Annot /Subtype /Link /A << /S /GoTo /D (#1) >> >>}%
-    \setcolor{\linkcolor}#1\endlink}
+    \setcolor{\linkcolor}#2\endlink}
   \def\done{\edef\st{\global\noexpand\toksA={\the\toksB}}\st}
 %
   %
@@ -2134,6 +2139,11 @@ end
     \pdffontattr#1{/ToUnicode \the\pdflastobj\space 0 R}%
   }%
 \fi\fi
+%
+% This is what gets called when #5 of \setfont is empty.
+\let\cmap\gobble
+%
+% (end of cmaps)
 
 
 % Set the font macro #1 to the font named \fontprefix#2.
@@ -2149,11 +2159,10 @@ end
 \def\setfont#1#2#3#4#5{%
   \font#1=\fontprefix#2#3 scaled #4
   \csname cmap#5\endcsname#1%
+  \ifx#2\ttshape\hyphenchar#1=-1 \fi
+  \ifx#2\ttbshape\hyphenchar#1=-1 \fi
+  \ifx#2\ttslshape\hyphenchar#1=-1 \fi
 }
-% This is what gets called when #5 of \setfont is empty.
-\let\cmap\gobble
-%
-% (end of cmaps)
 
 % Use cm as the default font prefix.
 % To specify the font prefix, you must define \fontprefix
@@ -2815,13 +2824,6 @@ end
 % @sansserif, explicit sans.
 \def\sansserif#1{{\sf #1}}
 
-% We can't just use \exhyphenpenalty, because that only has effect at
-% the end of a paragraph.  Restore normal hyphenation at the end of the
-% group within which \nohyphenation is presumably called.
-%
-\def\nohyphenation{\hyphenchar\font = -1  \aftergroup\restorehyphenation}
-\def\restorehyphenation{\hyphenchar\font = `- }
-
 \newif\iffrenchspacing
 \frenchspacingfalse
 
@@ -2890,11 +2892,8 @@ end
     % Switch to typewriter.
     \tt
     %
-    % But `\ ' produces the large typewriter interword space.
+    % `\ ' produces the large typewriter interword space.
     \def\ {{\spaceskip = 0pt{} }}%
-    %
-    % Turn off hyphenation.
-    \nohyphenation
     %
     \plainfrenchspacing
     #1%
@@ -2902,15 +2901,20 @@ end
   \null % reset spacefactor to 1000
 }
 
-% We *must* turn on hyphenation at `-' and `_' in @code.
-% (But see \codedashfinish below.)
+% This is for LuaTeX: It is not sufficient to disable hyphenation at
+% explicit dashes by setting `\hyphenchar` to -1.
+\def\dashnobreak{%
+  \normaldash
+  \penalty 10000 }
+
+% We must turn on hyphenation at `-' and `_' in @code.
 % Otherwise, it is too hard to avoid overfull hboxes
 % in the Emacs manual, the Library manual, etc.
+% We explicitly allow hyphenation at these characters
+% using \discretionary.
 %
-% Unfortunately, TeX uses one parameter (\hyphenchar) to control
-% both hyphenation at - and hyphenation within words.
-% We must therefore turn them both off (\tclose does that)
-% and arrange explicitly to hyphenate at a dash. -- rms.
+% Hyphenation at - and hyphenation within words was turned off
+% by default for the tt fonts using the \hyphenchar parameter of TeX.
 {
   \catcode`\-=\active \catcode`\_=\active
   \catcode`\'=\active \catcode`\`=\active
@@ -2923,7 +2927,7 @@ end
      \let-\codedash
      \let_\codeunder
     \else
-     \let-\normaldash
+     \let-\dashnobreak
      \let_\realunder
     \fi
     % Given -foo (with a single dash), we do not want to allow a break
@@ -3200,7 +3204,7 @@ end
 
 % definition of @key with no lozenge.
 %
-\def\key#1{{\setregularquotes \nohyphenation \tt #1}\null}
+\def\key#1{{\setregularquotes \tt #1}\null}
 
 % @clicksequence{File @click{} Open ...}
 \def\clicksequence#1{\begingroup #1\endgroup}
@@ -3691,7 +3695,10 @@ $$%
 
 % @textdegree - the normal degrees sign.
 %
-\def\textdegree{$^\circ$}
+\def\textdegree{%
+   \ifmmode ^\circ
+   \else {\tcfont \char 176}%
+   \fi}
 
 % Laurent Siebenmann reports \Orb undefined with:
 %  Textures 1.7.7 (preloaded format=plain 93.10.14)  (68K)  16 APR 2004 02:38
@@ -3744,6 +3751,7 @@ $$%
   % Open one extra group, as we want to close it in the middle of \Etitlepage.
   \begingroup
     \parindent=0pt \textfonts
+    \headingsoff
     % Leave some space at the very top of the page.
     \vglue\titlepagetopglue
     % No rule at page bottom unless we print one at the top with @title.
@@ -3771,11 +3779,9 @@ $$%
     % If we use the new definition of \page, we always get a blank page
     % after the title page, which we certainly don't want.
     \oldpage
+    \pageone
   \endgroup
   %
-  % Need this before the \...aftertitlepage checks so that if they are
-  % in effect the toc pages will come out with page numbers.
-  \HEADINGSon
 }
 
 \def\finishtitlepage{%
@@ -3944,7 +3950,6 @@ $$%
 }
 
 \def\HEADINGSoff{{\globaldefs=1 \headingsoff}} % global setting
-\HEADINGSoff  % it's the default
 
 % When we turn headings on, set the page number to 1.
 \def\pageone{
@@ -3968,7 +3973,7 @@ $$%
 \pageone
 \HEADINGSsinglex
 }
-\def\HEADINGSon{\HEADINGSdouble}
+% \def\HEADINGSon{\HEADINGSdouble} % defined by \CHAPPAGon
 
 \def\HEADINGSafter{\let\HEADINGShook=\HEADINGSdoublex}
 \let\HEADINGSdoubleafter=\HEADINGSafter
@@ -5270,7 +5275,10 @@ $$%
         \xdef\trimmed{\segment}%
         \xdef\trimmed{\expandafter\eatspaces\expandafter{\trimmed}}%
         \xdef\indexsortkey{\trimmed}%
-        \ifx\indexsortkey\empty\xdef\indexsortkey{ }\fi
+        \ifx\indexsortkey\empty
+          \message{Empty index sort key near line \the\inputlineno}%
+          \xdef\indexsortkey{ }%
+        \fi
       }\fi
       %
       % Append to \fullindexsortkey.
@@ -5610,6 +5618,11 @@ might help (with 'rm \jobname.?? \jobname.??s')%
 \newdimen\entryrightmargin
 \entryrightmargin=0pt
 
+% for PDF output, whether to make the text of the entry a link to the page
+% number.  set for @contents and @shortcontents where there is only one
+% page number.
+\newif\iflinkentrytext
+
 % \entry typesets a paragraph consisting of the text (#1), dot leaders, and
 % then page number (#2) flushed to the right margin.  It is used for index
 % and table of contents entries.  The paragraph is indented by \leftskip.
@@ -5636,7 +5649,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
 }
 \def\entrybreak{\unskip\space\ignorespaces}%
 \def\doentry{%
-    % Save the text of the entry
+    % Save the text of the entry in \boxA
     \global\setbox\boxA=\hbox\bgroup
     \bgroup % Instead of the swallowed brace.
       \noindent
@@ -5646,12 +5659,21 @@ might help (with 'rm \jobname.?? \jobname.??s')%
       % with catcodes occurring.
 }
 {\catcode`\@=11
+% #1 is the page number
 \gdef\finishentry#1{%
-    \egroup % end box A
+    \egroup % end \boxA
     \dimen@ = \wd\boxA % Length of text of entry
+    % add any leaders and page number to \boxA.
     \global\setbox\boxA=\hbox\bgroup
-      \unhbox\boxA
-      % #1 is the page number.
+      \ifpdforxetex
+        \iflinkentrytext
+          \pdflinkpage{#1}{\unhbox\boxA}%
+        \else
+          \unhbox\boxA
+        \fi
+      \else
+        \unhbox\boxA
+      \fi
       %
       % Get the width of the page numbers, and only use
       % leaders if they are present.
@@ -5670,6 +5692,8 @@ might help (with 'rm \jobname.?? \jobname.??s')%
         \fi
       \fi
     \egroup % end \boxA
+    %
+    % now output
     \ifdim\wd\boxB = 0pt
       \noindent\unhbox\boxA\par
       \nobreak
@@ -6369,7 +6393,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
   \fi
 }
 
-\parseargdef\setchapternewpage{\csname CHAPPAG#1\endcsname}
+\parseargdef\setchapternewpage{\csname CHAPPAG#1\endcsname\HEADINGSon}
 
 \def\CHAPPAGoff{%
 \global\let\contentsalignmacro = \chappager
@@ -6386,7 +6410,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
 \global\let\pchapsepmacro=\chapoddpage
 \global\def\HEADINGSon{\HEADINGSdouble}}
 
-\CHAPPAGon
+\setchapternewpage on
 
 % \chapmacro - Chapter opening.
 %
@@ -6398,6 +6422,16 @@ might help (with 'rm \jobname.?? \jobname.??s')%
 \def\Ynothingkeyword{Ynothing}
 \def\Yappendixkeyword{Yappendix}
 \def\Yomitfromtockeyword{Yomitfromtoc}
+%
+%
+% Definitions for @thischapter. These can be overridden in translation
+% files.
+\def\thischapterAppendix{%
+  \putwordAppendix{} \thischapternum: \thischaptername}
+
+\def\thischapterChapter{%
+  \putwordChapter{} \thischapternum: \thischaptername}
+%
 %
 \def\chapmacro#1#2#3{%
   \expandafter\ifx\thisenv\titlepage\else
@@ -6421,22 +6455,14 @@ might help (with 'rm \jobname.?? \jobname.??s')%
     \xdef\currentchapterdefs{%
       \gdef\noexpand\thischaptername{\the\toks0}%
       \gdef\noexpand\thischapternum{\appendixletter}%
-      % \noexpand\putwordAppendix avoids expanding indigestible
-      % commands in some of the translations.
-      \gdef\noexpand\thischapter{\noexpand\putwordAppendix{}
-                                 \noexpand\thischapternum:
-                                 \noexpand\thischaptername}%
+      \let\noexpand\thischapter\noexpand\thischapterAppendix
     }%
   \else
     \toks0={#1}%
     \xdef\currentchapterdefs{%
       \gdef\noexpand\thischaptername{\the\toks0}%
       \gdef\noexpand\thischapternum{\the\chapno}%
-      % \noexpand\putwordChapter avoids expanding indigestible
-      % commands in some of the translations.
-      \gdef\noexpand\thischapter{\noexpand\putwordChapter{}
-                                 \noexpand\thischapternum:
-                                 \noexpand\thischaptername}%
+      \let\noexpand\thischapter\noexpand\thischapterChapter
     }%
   \fi\fi\fi
   %
@@ -6522,6 +6548,12 @@ might help (with 'rm \jobname.?? \jobname.??s')%
 \def\subsubsecheadingskip{\subsecheadingskip}
 \def\subsubsecheadingbreak{\subsecheadingbreak}
 
+% Definition for @thissection. This can be overridden in translation
+% files.
+\def\thissectionDef{%
+  \putwordSection{} \thissectionnum: \thissectionname}
+%
+
 
 % Print any size, any type, section title.
 %
@@ -6563,11 +6595,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
         \xdef\currentsectiondefs{%
           \gdef\noexpand\thissectionname{\the\toks0}%
           \gdef\noexpand\thissectionnum{#4}%
-          % \noexpand\putwordSection avoids expanding indigestible
-          % commands in some of the translations.
-          \gdef\noexpand\thissection{\noexpand\putwordSection{}
-                                     \noexpand\thissectionnum:
-                                     \noexpand\thissectionname}%
+          \let\noexpand\thissection\noexpand\thissectionDef
         }%
       \fi
     \else
@@ -6576,11 +6604,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
         \xdef\currentsectiondefs{%
           \gdef\noexpand\thissectionname{\the\toks0}%
           \gdef\noexpand\thissectionnum{#4}%
-          % \noexpand\putwordSection avoids expanding indigestible
-          % commands in some of the translations.
-          \gdef\noexpand\thissection{\noexpand\putwordSection{}
-                                     \noexpand\thissectionnum:
-                                     \noexpand\thissectionname}%
+          \let\noexpand\thissection\noexpand\thissectionDef
         }%
       \fi
     \fi\fi\fi
@@ -6766,6 +6790,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
     \def\thistitle{}% no title in double-sided headings
     % Record where the Roman numerals started.
     \ifnum\romancount=0 \global\romancount=\pagecount \fi
+    \linkentrytexttrue
 }
 
 % \raggedbottom in plain.tex hardcodes \topskip so override it
@@ -6893,7 +6918,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
 % Chapters, in the short toc.
 % See comments in \dochapentry re vbox and related settings.
 \def\shortchapentry#1#2#3#4{%
-  \tocentry{\shortchaplabel{#2}\labelspace #1}{\doshortpageno\bgroup#4\egroup}%
+  \tocentry{\shortchaplabel{#2}\labelspace #1}{#4}%
 }
 
 % Appendices, in the main contents.
@@ -6908,7 +6933,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
 
 % Unnumbered chapters.
 \def\unnchapentry#1#2#3#4{\dochapentry{#1}{#4}}
-\def\shortunnchapentry#1#2#3#4{\tocentry{#1}{\doshortpageno\bgroup#4\egroup}}
+\def\shortunnchapentry#1#2#3#4{\tocentry{#1}{#4}}
 
 % Sections.
 \def\numsecentry#1#2#3#4{\dosecentry{#2\labelspace#1}{#4}}
@@ -6940,24 +6965,24 @@ might help (with 'rm \jobname.?? \jobname.??s')%
      % Move the page numbers slightly to the right
      \advance\entryrightmargin by -0.05em
      \chapentryfonts
-     \tocentry{#1}{\dopageno\bgroup#2\egroup}%
+     \tocentry{#1}{#2}%
    \endgroup
    \nobreak\vskip .25\baselineskip plus.1\baselineskip
 }
 
 \def\dosecentry#1#2{\begingroup
   \secentryfonts \leftskip=\tocindent
-  \tocentry{#1}{\dopageno\bgroup#2\egroup}%
+  \tocentry{#1}{#2}%
 \endgroup}
 
 \def\dosubsecentry#1#2{\begingroup
   \subsecentryfonts \leftskip=2\tocindent
-  \tocentry{#1}{\dopageno\bgroup#2\egroup}%
+  \tocentry{#1}{#2}%
 \endgroup}
 
 \def\dosubsubsecentry#1#2{\begingroup
   \subsubsecentryfonts \leftskip=3\tocindent
-  \tocentry{#1}{\dopageno\bgroup#2\egroup}%
+  \tocentry{#1}{#2}%
 \endgroup}
 
 % We use the same \entry macro as for the index entries.
@@ -6965,9 +6990,6 @@ might help (with 'rm \jobname.?? \jobname.??s')%
 
 % Space between chapter (or whatever) number and the title.
 \def\labelspace{\hskip1em \relax}
-
-\def\dopageno#1{{\rm #1}}
-\def\doshortpageno#1{{\rm #1}}
 
 \def\chapentryfonts{\secfonts \rm}
 \def\secentryfonts{\textfonts}
@@ -7120,12 +7142,19 @@ might help (with 'rm \jobname.?? \jobname.??s')%
   \startsavinginserts
   \lskip=\leftskip \rskip=\rightskip
   \leftskip=0pt\rightskip=0pt % we want these *outside*.
+  %
+  % Set paragraph width for text inside cartouche.  There are
+  % left and right margins of 3pt each plus two vrules 0.4pt each.
   \cartinner=\hsize \advance\cartinner by-\lskip
   \advance\cartinner by-\rskip
+  \advance\cartinner by -6.8pt
+  %
+  % For drawing top and bottom of cartouche.  Each corner char
+  % adds 6pt and we take off the width of a rule to line up with the
+  % right boundary perfectly.
   \cartouter=\hsize
-  \advance\cartouter by 18.4pt	% allow for 3pt kerns on either
-				% side, and for 6pt waste from
-				% each corner char, and rule thickness
+  \advance\cartouter by 11.6pt
+  %
   \normbskip=\baselineskip \normpskip=\parskip \normlskip=\lineskip
   %
   % If this cartouche directly follows a sectioning command, we need the
@@ -7397,7 +7426,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
 \endgroup
 %
 \def\setupverb{%
-  \tt  % easiest (and conventionally used) font for verbatim
+  \tt
   \def\par{\leavevmode\endgraf}%
   \setcodequotes
   \tabeightspaces
@@ -7574,32 +7603,28 @@ might help (with 'rm \jobname.?? \jobname.??s')%
   \exdentamount=\defbodyindent
 }
 
-\def\dodefunx#1{%
-  % First, check whether we are in the right environment:
-  \checkenv#1%
-  %
-  % As above, allow line break if we have multiple x headers in a row.
-  % It's not a great place, though.
-  \ifnum\lastpenalty=10002 \penalty3000 \else \defunpenalty=10002 \fi
-  %
-  % And now, it's time to reuse the body of the original defun:
-  \expandafter\gobbledefun#1%
-}
-\def\gobbledefun#1\startdefun{}
+\newtoks\defidx
+\newtoks\deftext
 
-% \printdefunline \deffnheader{text}
+\def\useindex#1{\defidx={#1}\ignorespaces}
+
+% Called as \printdefunline \deffooheader{text}
 %
 \def\printdefunline#1#2{%
   \begingroup
     \plainfrenchspacing
-    % call \deffnheader:
+    % call \deffooheader:
     #1#2 \endheader
+    % create the index entry
+    \defcharsdefault
+    \edef\temp{\noexpand\doind{\the\defidx}{\the\deftext}}%
+    \temp
     % common ending:
     \interlinepenalty = 10000
     \advance\rightskip by 0pt plus 1fil\relax
     \endgraf
     \nobreak\vskip -\parskip
-    \penalty\defunpenalty  % signal to \startdefun and \dodefunx
+    \penalty\defunpenalty  % signal to \startdefun and \deffoox
     % Some of the @defun-type tags do not enable magic parentheses,
     % rendering the following check redundant.  But we don't optimize.
     \checkparencounts
@@ -7608,7 +7633,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
 
 \def\Edefun{\endgraf\medbreak}
 
-% \makedefun{deffoo}{ (definition of \deffooheader) }
+% \makedefun{deffoo} (\deffooheader parameters) { (\deffooheader expansion) }
 %
 % Define \deffoo, \deffoox  \Edeffoo and \deffooheader.
 \def\makedefun#1{%
@@ -7623,8 +7648,18 @@ might help (with 'rm \jobname.?? \jobname.??s')%
     \doingtypefnfalse    % distinguish typed functions from all else
     \parseargusing\activeparens{\printdefunline#3}%
   }%
-  \def#2{\dodefunx#1}%
-  \def#3%
+  \def#2{%
+    % First, check whether we are in the right environment:
+    \checkenv#1%
+    %
+    % As in \startdefun, allow line break if we have multiple x headers
+    % in a row.  It's not a great place, though.
+    \ifnum\lastpenalty=10002 \penalty3000 \else \defunpenalty=10002 \fi
+    %
+    \doingtypefnfalse    % distinguish typed functions from all else
+    \parseargusing\activeparens{\printdefunline#3}%
+  }%
+  \def#3% definition of \deffooheader follows
 }
 
 \newif\ifdoingtypefn       % doing typed function?
@@ -7649,18 +7684,23 @@ might help (with 'rm \jobname.?? \jobname.??s')%
   \fi\fi
 }
 
+\def\defind#1#2{
+  \defidx={#1}%
+  \deftext={#2}%
+}
+
 % Untyped functions:
 
 % @deffn category name args
 \makedefun{deffn}#1 #2 #3\endheader{%
-  \doind{fn}{\code{#2}}%
+  \defind{fn}{\code{#2}}%
   \defname{#1}{}{#2}\magicamp\defunargs{#3\unskip}%
 }
 
 % @defop category class name args
 \makedefun{defop}#1 {\defopheaderx{#1\ \putwordon}}
 \def\defopheaderx#1#2 #3 #4\endheader{%
-  \doind{fn}{\code{#3}\space\putwordon\ \code{#2}}%
+  \defind{fn}{\code{#3}\space\putwordon\ \code{#2}}%
   \defname{#1\ \code{#2}}{}{#3}\magicamp\defunargs{#4\unskip}%
 }
 
@@ -7668,7 +7708,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
 
 % @deftypefn category type name args
 \makedefun{deftypefn}#1 #2 #3 #4\endheader{%
-  \doind{fn}{\code{#3}}%
+  \defind{fn}{\code{#3}}%
   \doingtypefntrue
   \defname{#1}{#2}{#3}\defunargs{#4\unskip}%
 }
@@ -7676,7 +7716,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
 % @deftypeop category class type name args
 \makedefun{deftypeop}#1 {\deftypeopheaderx{#1\ \putwordon}}
 \def\deftypeopheaderx#1#2 #3 #4 #5\endheader{%
-  \doind{fn}{\code{#4}\space\putwordon\ \code{#1\ \code{#2}}}%
+  \defind{fn}{\code{#4}\space\putwordon\ \code{#1\ \code{#2}}}%
   \doingtypefntrue
   \defname{#1\ \code{#2}}{#3}{#4}\defunargs{#5\unskip}%
 }
@@ -7685,14 +7725,14 @@ might help (with 'rm \jobname.?? \jobname.??s')%
 
 % @deftypevr category type var args
 \makedefun{deftypevr}#1 #2 #3 #4\endheader{%
-  \doind{vr}{\code{#3}}%
+  \defind{vr}{\code{#3}}%
   \defname{#1}{#2}{#3}\defunargs{#4\unskip}%
 }
 
 % @deftypecv category class type var args
 \makedefun{deftypecv}#1 {\deftypecvheaderx{#1\ \putwordof}}
 \def\deftypecvheaderx#1#2 #3 #4 #5\endheader{%
-  \doind{vr}{\code{#4}\space\putwordof\ \code{#2}}%
+  \defind{vr}{\code{#4}\space\putwordof\ \code{#2}}%
   \defname{#1\ \code{#2}}{#3}{#4}\defunargs{#5\unskip}%
 }
 
@@ -7709,7 +7749,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
 
 % @deftp category name args
 \makedefun{deftp}#1 #2 #3\endheader{%
-  \doind{tp}{\code{#2}}%
+  \defind{tp}{\code{#2}}%
   \defname{#1}{}{#2}\defunargs{#3\unskip}%
 }
 
@@ -8418,21 +8458,21 @@ might help (with 'rm \jobname.?? \jobname.??s')%
   \ifcase\paramno
   % 0
     \expandafter\xdef\csname\the\macname\endcsname{%
-      \bgroup
+      \begingroup
         \noexpand\spaceisspace
         \noexpand\endlineisspace
         \noexpand\expandafter % skip any whitespace after the macro name.
         \expandafter\noexpand\csname\the\macname @@@\endcsname}%
     \expandafter\xdef\csname\the\macname @@@\endcsname{%
-      \egroup
+      \endgroup
       \noexpand\scanmacro{\macrobody}}%
   \or % 1
     \expandafter\xdef\csname\the\macname\endcsname{%
-       \bgroup
+       \begingroup
        \noexpand\braceorline
        \expandafter\noexpand\csname\the\macname @@@\endcsname}%
     \expandafter\xdef\csname\the\macname @@@\endcsname##1{%
-      \egroup
+      \endgroup
       \noexpand\scanmacro{\macrobody}%
       }%
   \else % at most 9
@@ -8443,7 +8483,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
       % @MACNAME@@@ removes braces surrounding the argument list.
       % @MACNAME@@@@ scans the macro body with arguments substituted.
       \expandafter\xdef\csname\the\macname\endcsname{%
-        \bgroup
+        \begingroup
         \noexpand\expandafter  % This \expandafter skip any spaces after the
         \noexpand\macroargctxt % macro before we change the catcode of space.
         \noexpand\expandafter
@@ -8457,7 +8497,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
       \expandafter\xdef
       \expandafter\expandafter
         \csname\the\macname @@@@\endcsname\paramlist{%
-          \egroup\noexpand\scanmacro{\macrobody}}%
+          \endgroup\noexpand\scanmacro{\macrobody}}%
     \else % 10 or more:
       \expandafter\xdef\csname\the\macname\endcsname{%
         \noexpand\getargvals@{\the\macname}{\argl}%
@@ -8900,11 +8940,10 @@ might help (with 'rm \jobname.?? \jobname.??s')%
       \xrefprintnodename\printedrefname
       %
       \ifflagclear{txiomitxrefpg}{%
-        % But we always want a comma and a space:
-        ,\space
-        %
+        % We always want a comma
+        ,%
         % output the `page 3'.
-        \turnoffactive \putwordpage\tie\refx{#1-pg}%
+        \turnoffactive \putpageref{#1}%
         % Add a , if xref followed by a space
         \if\space\noexpand\tokenafterxref ,%
         \else\ifx\	\tokenafterxref ,% @TAB
@@ -8919,6 +8958,10 @@ might help (with 'rm \jobname.?? \jobname.??s')%
   \fi
   \endlink
 \endgroup}
+
+% can be overridden in translation files
+\def\putpageref#1{%
+  \space\putwordpage\tie\refx{#1-pg}}
 
 % Output a cross-manual xref to #1.  Used just above (twice).
 %
@@ -10050,7 +10093,7 @@ directory should work if nowhere else does.}
   \gdefchar^^ae{\v Z}
   \gdefchar^^af{\dotaccent Z}
   %
-  \gdefchar^^b0{\textdegree{}}
+  \gdefchar^^b0{\textdegree}
   \gdefchar^^b1{\ogonek{a}}
   \gdefchar^^b2{\ogonek{ }}
   \gdefchar^^b3{\l}
@@ -10473,7 +10516,7 @@ directory should work if nowhere else does.}
   \DeclareUnicodeCharacter{00AE}{\registeredsymbol{}}%
   \DeclareUnicodeCharacter{00AF}{\={ }}%
   %
-  \DeclareUnicodeCharacter{00B0}{\ringaccent{ }}%
+  \DeclareUnicodeCharacter{00B0}{\textdegree}%
   \DeclareUnicodeCharacter{00B1}{\ensuremath\pm}%
   \DeclareUnicodeCharacter{00B2}{$^2$}%
   \DeclareUnicodeCharacter{00B3}{$^3$}%
@@ -10977,7 +11020,7 @@ directory should work if nowhere else does.}
   %
   \DeclareUnicodeCharacter{20AC}{\euro{}}%
   %
-  \DeclareUnicodeCharacter{2192}{\expansion{}}%
+  \DeclareUnicodeCharacter{2192}{\arrow}%
   \DeclareUnicodeCharacter{21D2}{\result{}}%
   %
   % Mathematical symbols
@@ -11438,17 +11481,18 @@ directory should work if nowhere else does.}
   \mtadjustprotcode#1\relax
 }
 
+\newcount\countC
 \def\mtadjustprotcode#1{%
-  \countA=0
+  \countC=0
   \loop
-    \ifcase\lpcode#1\countA\else
-      \mtadjustcp\lpcode#1\countA
+    \ifcase\lpcode#1\countC\else
+      \mtadjustcp\lpcode#1\countC
     \fi
-    \ifcase\rpcode#1\countA\else
-      \mtadjustcp\rpcode#1\countA
+    \ifcase\rpcode#1\countC\else
+      \mtadjustcp\rpcode#1\countC
     \fi
-    \advance\countA 1
-  \ifnum\countA < 256 \repeat
+    \advance\countC 1
+  \ifnum\countC < 256 \repeat
 }
 
 \newcount\countB

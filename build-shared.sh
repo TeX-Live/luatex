@@ -306,6 +306,7 @@ TL_MAKE=$MAKE ../source/configure  $CONFHOST $CONFBUILD  $WARNINGFLAGS\
     --without-system-freetype2 \
     --without-system-gd  \
     --without-system-libpng \
+    --without-system-potrace \
     --without-system-pplib \
     --without-system-poppler \
     --without-system-gmp \

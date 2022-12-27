@@ -1,4 +1,4 @@
-## $Id: pdftex.am 61575 2022-01-11 22:47:10Z karl $
+## $Id: pdftex.am 65338 2022-12-23 12:57:49Z takuji $
 ## texk/web2c/pdftexdir/am/pdftex.am: Makefile fragment for pdfTeX.
 ##
 ## Copyright 2016-2022 Karl Berry <tex-live@tug.org>

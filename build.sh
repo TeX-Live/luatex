@@ -334,6 +334,7 @@ TL_MAKE=$MAKE ../source/configure  $TEXLIVEOPT $CONFHOST $CONFBUILD  $WARNINGFLA
     --without-system-freetype2 \
     --without-system-gd \
     --without-system-libpng \
+    --without-system-potrace \
     --without-system-pplib \
     --without-system-poppler \
     --without-system-gmp \

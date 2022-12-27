@@ -1,4 +1,4 @@
-$Id: README 64756 2022-10-19 21:15:26Z kakuto $
+$Id: README 65304 2022-12-18 01:06:39Z kakuto $
 Public domain.  Originally created by Karl Berry, 2005.
 
 Libraries we compile for TeX Live.
@@ -25,8 +25,8 @@ graphite2 1.3.14 - checked 10apr20
   http://sourceforge.net/projects/silgraphite/files/graphite2/
   (requires C++11)
 
-harfbuzz 5.3.1 - checked 20oct22
-  https://github.com/harfbuzz/harfbuzz/releases/tag/5.3.1
+harfbuzz 6.0.0 - checked 18dec22
+  https://github.com/harfbuzz/harfbuzz/releases/tag/6.0.0
 
 icu 70.1 - checked 16jan22
   https://github.com/unicode-org/icu/releases/
@@ -34,7 +34,7 @@ icu 70.1 - checked 16jan22
 libpaper 1.1.28 - checked 10sep22
   http://ftp.debian.org/debian/pool/main/libp/libpaper/
 
-libpng 1.6.38 - checked 16sep22
+libpng 1.6.39 - checked 11nov22
   https://sourceforge.net/projects/libpng/files/ - used by many
 
 lua 5.2.4 - checked 11mar15
@@ -46,10 +46,10 @@ lua 5.3.6 - checked 04oct20
 luajit 2.1.0-beta3 - checked 20jun17
   http://luajit.org/download/LuaJIT-2.1.0-beta3.tar.gz
 
-mpfr 4.1.0 - checked 12jul20
+mpfr 4.1.1 - checked 18nov22
   http://ftp.gnu.org/gnu/mpfr/
 
-pixman 0.42.0 - checked 19oct22
+pixman 0.42.2 - checked 03nov22
   http://cairographics.org/releases/
 
 potrace 1.16 - checked 29aug22

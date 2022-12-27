@@ -1,4 +1,4 @@
-## $Id: xetex.am 61575 2022-01-11 22:47:10Z karl $
+## $Id: xetex.am 65338 2022-12-23 12:57:49Z takuji $
 ## texk/web2c/xetexdir/am/xetex.am: Makefile fragment for XeTeX.
 ##
 ## Copyright 2017-2022 Karl Berry <tex-live@tug.org>

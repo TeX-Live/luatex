@@ -1,4 +1,4 @@
-## $Id: Makefile.am 64447 2022-09-19 22:37:09Z karl $
+## $Id: Makefile.am 65325 2022-12-21 20:56:12Z karl $
 ## Makefile.am for the TeX Live subdirectory texk/texlive/linked_scripts/
 ##
 ## Copyright 2016-2022 Karl Berry <tex-live@tug.org>
@@ -98,7 +98,8 @@ texmf_shell_scripts = \
 	texosquery/texosquery-jre8.sh \
 	tikztosvg/tikztosvg \
 	typeoutfileinfo/typeoutfileinfo.sh \
-	wordcount/wordcount.sh
+	wordcount/wordcount.sh \
+	xput/xputserver
 
 texmf_other_scripts = \
 	a2ping/a2ping.pl \
@@ -111,6 +112,7 @@ texmf_other_scripts = \
 	authorindex/authorindex \
 	bib2gls/bib2gls.sh \
 	bib2gls/convertgls2bib.sh \
+	bibcop/bibcop.pl \
 	bundledoc/arlatex \
 	bundledoc/bundledoc \
 	cachepic/cachepic.tlu \
@@ -133,6 +135,7 @@ texmf_other_scripts = \
 	ctanupload/ctanupload.pl \
 	de-macro/de-macro \
 	diadia/diadia.lua \
+	digestif/digestif.texlua \
 	dosepsbin/dosepsbin.pl \
 	dviasm/dviasm.py \
 	dviinfox/dviinfox.pl \

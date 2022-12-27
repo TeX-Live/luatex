@@ -312,7 +312,8 @@ texmf_shell_scripts = \
 	texosquery/texosquery-jre8.sh \
 	tikztosvg/tikztosvg \
 	typeoutfileinfo/typeoutfileinfo.sh \
-	wordcount/wordcount.sh
+	wordcount/wordcount.sh \
+	xput/xputserver
 
 texmf_other_scripts = \
 	a2ping/a2ping.pl \
@@ -325,6 +326,7 @@ texmf_other_scripts = \
 	authorindex/authorindex \
 	bib2gls/bib2gls.sh \
 	bib2gls/convertgls2bib.sh \
+	bibcop/bibcop.pl \
 	bundledoc/arlatex \
 	bundledoc/bundledoc \
 	cachepic/cachepic.tlu \
@@ -347,6 +349,7 @@ texmf_other_scripts = \
 	ctanupload/ctanupload.pl \
 	de-macro/de-macro \
 	diadia/diadia.lua \
+	digestif/digestif.texlua \
 	dosepsbin/dosepsbin.pl \
 	dviasm/dviasm.py \
 	dviinfox/dviinfox.pl \

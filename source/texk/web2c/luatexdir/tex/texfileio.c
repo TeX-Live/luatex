@@ -346,7 +346,7 @@ boolean lua_a_open_out(alpha_file * f, char *fn, int n)
         }
     } else {
         if (openoutnameok(fn)) {
-            if (n > 0 && selector != term_only && log_file) {
+            if (n > 0 && selector != term_only) {
                 /*tex
 
                     This message to the log is for downward compatibility with

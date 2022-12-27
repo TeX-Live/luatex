@@ -130,6 +130,20 @@ sections:
 \LL
 \stoptabulate
 
+Instead of the pseudo class variable (7) you can use a family number as signal
+for using the current family. This permits classifying characters with a class
+and still let the family adapt. The trigger family is set with \lpr
+{variablefam}. So:
+
+\starttyping
+\variablefam"24
+\Umathchardef\foo "3 "24 123
+\foo \fam9
+\stoptyping
+
+Results in a curly left brace taken from family 9 with class \quote {relation}
+and spacing around it will be accordingly.
+
 \stopsection
 
 \startsection[title={Math styles}]
@@ -774,13 +788,13 @@ right end. The question is: how often is this implemented, and if so, do the
 kerns assume correction too. Anyway, with this parameter one can control it.
 
 \starttabulate[|l|ck1|ck1|ck1|ck1|ck1|ck1|]
-    \NC
-        \NC \mathnolimitsmode0    $\displaystyle\int\nolimits^0_1$
-        \NC \mathnolimitsmode1    $\displaystyle\int\nolimits^0_1$
-        \NC \mathnolimitsmode2    $\displaystyle\int\nolimits^0_1$
-        \NC \mathnolimitsmode3    $\displaystyle\int\nolimits^0_1$
-        \NC \mathnolimitsmode4    $\displaystyle\int\nolimits^0_1$
-        \NC \mathnolimitsmode8000 $\displaystyle\int\nolimits^0_1$
+    \NC % probably not ok, we need a raw int here
+        \NC \mathnolimitsmode0    $\displaystyle\mathop{\normalint}\nolimits^0_1$
+        \NC \mathnolimitsmode1    $\displaystyle\mathop{\normalint}\nolimits^0_1$
+        \NC \mathnolimitsmode2    $\displaystyle\mathop{\normalint}\nolimits^0_1$
+        \NC \mathnolimitsmode3    $\displaystyle\mathop{\normalint}\nolimits^0_1$
+        \NC \mathnolimitsmode4    $\displaystyle\mathop{\normalint}\nolimits^0_1$
+        \NC \mathnolimitsmode8000 $\displaystyle\mathop{\normalint}\nolimits^0_1$
     \NC \NR
     \TB
     \BC mode

@@ -728,10 +728,10 @@ font.setfont(<number> n, <table> f)
 
 Note that at the moment, each access to the \type {font.fonts} or call to \type
 {font.getfont} creates a \LUA\ table for the whole font unless you cached it.
-If you want a copy of the internal data you can use \type {font.copyfont}:
+If you want a copy of the internal data you can use \type {font.getcopy}:
 
 \startfunctioncall
-<table> f = font.copyfont(<number> n)
+<table> f = font.getcopy(<number> n)
 \stopfunctioncall
 
 This one will return a table of the parameters as known to \TEX. These can be

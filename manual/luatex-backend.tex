@@ -125,7 +125,7 @@ after the \PDFTEX\ equivalents.
 \stopsubsection
 
 \startsubsection[title={\type {[set|get]suppressoptionalinfo}, \type {[set|get]trailerid},
-\type {[set|get]omitcidset} and \type {[set|get]omitinfodict}}]
+\type {[set|get]omitcidset}, \type {[set|get]omitinfodict} and \type {[set|get]omitmediabox}}]
 
 \topicindex{\PDF+options}
 \topicindex{\PDF+trailer}
@@ -135,6 +135,7 @@ after the \PDFTEX\ equivalents.
 \libindex{getomitcidset}           \libindex{setomitcidset}
 \libindex{getomitcharset}          \libindex{setomitcharset}
 \libindex{getomitinfodict}         \libindex{setomitinfodict}
+\libindex{getomitmediabox}         \libindex{setomitmediabox}
 
 The optional info bitset (a number) determines what kind of info gets flushed.
 By default we flush all. See \in {section} [sec:pdfextensions] for more details.
@@ -145,6 +146,9 @@ array content with checksums.
 The cidset, charset and info flags (numbers) disables inclusion of a so called
 \type {CIDSet} and \type {CharSet} entries, which can be handy when aiming at
 some of the many \PDF\ substandards.
+
+When it is omitted, one should provide the \type {MediaBox} via the page attribute
+options, because it is a mandate field. No checking is done.
 
 \stopsubsection
 

@@ -1,4 +1,4 @@
-% language=uk engine=luatex runpath=texruns:manuals/luatex
+% language=us engine=luatex runpath=texruns:manuals/luatex
 
 \environment luatex-style
 
@@ -1146,7 +1146,7 @@ so a separate grouping related stack is used. A side effect is that there can be
 paragraphs with only a local par node followed by direction synchronization
 nodes. Paragraphs like that are seen as empty paragraphs and therefore ignored.
 Because \type {\noindent} doesn't inject anything but a \type {\indent} injects
-an box, paragraphs with only an indent and directions are handles as paragraphs
+an box, paragraphs with only an indent and directions are handled as paragraphs
 with content.
 
 \stopsubsection
@@ -1404,6 +1404,26 @@ choices but consistency with other engines and the fact that in \KPSE\ mode a
 common file \IO\ layer is used can have a side effect of breaking compatibility.
 We still stick to our view that at the log level we can (and might be) more
 incompatible. We already expose some more details.
+
+\stopsubsection
+
+\startsubsection[title=Hyperlinks]
+
+\topicindex {hyperlinks}
+
+There is an experimental feature that makes multi|-|line hyper links behave a
+little better, fixing some side effects that showed up in r2l typesetting but
+also can surface in l2r. Because this got unnoticed till 2023, and because it
+depends bit on how macro packages deal with hyper links, the fix is currently
+under parameter control:
+
+\starttyping
+\pdfvariable linking = 1
+\stoptyping
+
+That way (we hope) legacy documents come out as expected, whatever those
+expectations are. One of the aspects dealt with concerns (unusual) left and right
+skips.
 
 \stopsubsection
 

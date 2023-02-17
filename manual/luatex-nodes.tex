@@ -1,4 +1,4 @@
-% language=uk
+% language=us engine=luatex runpath=texruns:manuals/luatex
 
 \environment luatex-style
 
@@ -893,7 +893,6 @@ The difference between \type {data} and \type {string} is that on assignment, th
 When a function is used, it gets called with as first argument the node that triggers
 the call.
 
-
 \stopsection
 
 \startsection[title={\DVI\ backend whatsits}]
@@ -915,7 +914,7 @@ output file.
 
 \startsection[title={\PDF\ backend whatsits}]
 
-\subsection{\whs {pdf_literal}}
+\subsection{\whs {pdf_literal} and \whs {pdf_late_literal}}
 
 \starttabulate[|l|l|p|]
 \DB field        \BC type   \BC explanation \NC \NR
@@ -1020,10 +1019,13 @@ objects.
 \TB
 \NC \type{action_type} \NC number           \NC the kind of action involved \NC \NR
 \NC \type{action_id}   \NC number or string \NC token list reference or string \NC \NR
+%NC \type{named_id}    \NC number           \NC the index of the destination \NC \NR
+% a strange key but needed for latex; a probably downward incompable patch instead of a fix
 \NC \type{named_id}    \NC number           \NC are \type {dest_id} and \type {struct_id} string values? \NC \NR
 \NC \type{file}        \NC string           \NC the target filename \NC \NR
 \NC \type{new_window}  \NC number           \NC the window state of the target \NC \NR
 \NC \type{data}        \NC string           \NC the name of the destination \NC \NR
+% needed for latex and therefore equivalent to pdftex
 \NC \type{struct_id}   \NC nil              \NC the action does not reference a structure destination \NC \NR
 \NC                    \NC number           \NC id of the referenced structure destination \NC \NR
 \NC                    \NC string           \NC name of the referenced structure destination \NC \NR

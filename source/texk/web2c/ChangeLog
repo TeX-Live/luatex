@@ -1,3 +1,31 @@
+2023-02-14  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* tests/fn-generate.perl:
+	Avoid errors on parallel test processing.
+	Report from Ken Brown.
+
+2023-02-13  Karl Berry  <karl@freefriends.org>
+
+	* enctexdir/enctex-pdftex.ch: move "\special shipout"
+	change here, from enctex2.ch, so it is not applied to tex (which
+	doesn't have it).
+
+2023-02-12  Phelype Oleinik <phe.h.o1@gmail.com>
+        and Karl Berry  <karl@freefriends.org>
+
+	* enctexdir/enctex2.ch: make parallel change for ``late''
+	\special shipout. This code is what avoids the invalid
+	write_stream(tail):=null assignment in the original code.
+	See pdftex.web (Implement \.{\\special}) for more.
+
+2023-01-28  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* Makefile.in, ac/web2c.ac (ptex, uptex):
+	Revert options --enable-(u)ptex(-synctex) for configure.
+	By default, we do not build binaries of (u)pTeX (ptex, uptex)
+	and we use alias of e-upTeX (eptex, euptex) for them.
+	https://github.com/texjporg/tex-jp-build/issues/32
+
 2023-01-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* configure.ac, ac/web2c.ac (ptex, uptex):
